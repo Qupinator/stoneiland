@@ -36,7 +36,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* фоновые свечения */
+  /* ---------- фоновые свечения ---------- */
   .orb {
     position: fixed;
     border-radius: 50%;
@@ -63,7 +63,7 @@
     -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, #000 10%, transparent 75%);
   }
 
-  /* контент */
+  /* ---------- контейнер ---------- */
   .wrap {
     position: relative;
     z-index: 2;
@@ -75,7 +75,31 @@
     text-align: center;
   }
 
-  /* текст над кнопкой */
+  /* ---------- название подписки ---------- */
+  .sub-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 7px 15px;
+    border-radius: 100px;
+    background: rgba(0,229,160,.08);
+    border: 1px solid rgba(0,229,160,.25);
+    margin-bottom: 22px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .sub-name .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* ---------- текст-подсказка ---------- */
   .hint {
     font-size: 15px;
     line-height: 1.6;
@@ -85,7 +109,7 @@
   }
   .hint b { color: var(--text); font-weight: 700; }
 
-  /* кнопка */
+  /* ---------- большая кнопка ---------- */
   .connect-wrap {
     position: relative;
     width: 178px; height: 178px;
@@ -152,7 +176,7 @@
   .connect-btn.loading .spinner { opacity: 1; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* кнопка копирования */
+  /* ---------- кнопка копирования ---------- */
   .copy-btn {
     width: 100%;
     max-width: 300px;
@@ -178,7 +202,7 @@
   .copy-btn:active { transform: scale(.985); }
   .copy-btn svg { width: 16px; height: 16px; opacity: .8; }
 
-  /* статус-строка (одна, внизу) */
+  /* ---------- нижняя плашка устройства ---------- */
   .device-info {
     position: fixed;
     left: 0; right: 0;
@@ -214,7 +238,7 @@
   .device-pill.err { color: var(--danger); border-color: rgba(255,92,114,.35); }
   .device-pill.err .dot { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 
-  /* тост */
+  /* ---------- тост ---------- */
   .toast {
     position: fixed;
     left: 50%;
@@ -223,6 +247,7 @@
     background: rgba(13,20,32,.94);
     border: 1px solid var(--stroke);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     color: var(--text);
     font-size: 13.5px;
     font-weight: 600;
@@ -251,8 +276,16 @@
 
 <div class="wrap">
 
+  <!-- название подписки -->
+  <div class="sub-name">
+    <span class="dot"></span>
+    <span id="subNameLabel">Подписка</span>
+  </div>
+
+  <!-- текст-подсказка -->
   <p class="hint">Нажмите на кнопку, чтобы <b>подписка</b> добавилась в приложение <b>Happ</b></p>
 
+  <!-- большая кнопка подключения -->
   <div class="connect-wrap">
     <div class="ring"></div>
     <div class="ring"></div>
@@ -267,6 +300,7 @@
     </button>
   </div>
 
+  <!-- кнопка копирования ссылки -->
   <button class="copy-btn" id="copyBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="9" y="9" width="12" height="12" rx="2.5"/>
@@ -277,6 +311,7 @@
 
 </div>
 
+<!-- нижняя плашка определения устройства -->
 <div class="device-info">
   <div class="device-pill" id="devicePill">
     <span class="dot"></span>
@@ -284,22 +319,29 @@
   </div>
 </div>
 
+<!-- всплывающее уведомление -->
 <div class="toast" id="toast">Ссылка скопирована</div>
 
 <script>
 /* =========================================================
-   НАСТРОЙКИ — замените на свою ссылку подписки
+   НАСТРОЙКИ — замените на свои значения
    ========================================================= */
-const SUBSCRIPTION_URL = "https://example.com/sub/your-token-here";
+const SUBSCRIPTION_URL  = "https://example.com/sub/your-token-here";
+const SUBSCRIPTION_NAME = "Palka BOOSTER";   // <-- название подписки
 
 /* ========================================================= */
 
-const btn        = document.getElementById("connectBtn");
-const btnLabel   = document.getElementById("btnLabel");
-const copyBtn    = document.getElementById("copyBtn");
-const toast      = document.getElementById("toast");
-const devicePill = document.getElementById("devicePill");
-const deviceText = document.getElementById("deviceText");
+const btn          = document.getElementById("connectBtn");
+const btnLabel     = document.getElementById("btnLabel");
+const copyBtn      = document.getElementById("copyBtn");
+const toast        = document.getElementById("toast");
+const devicePill   = document.getElementById("devicePill");
+const deviceText   = document.getElementById("deviceText");
+const subNameLabel = document.getElementById("subNameLabel");
+
+/* Показываем название подписки на странице */
+subNameLabel.textContent = SUBSCRIPTION_NAME;
+document.title = SUBSCRIPTION_NAME + " — Happ";
 
 /* ---------- ОПРЕДЕЛЕНИЕ УСТРОЙСТВА ---------- */
 function detectDevice() {
@@ -312,7 +354,6 @@ function detectDevice() {
 
   const isAndroid = /Android/i.test(ua);
   const isMobile = isIOS || isAndroid || /Mobile|Windows Phone/i.test(ua);
-  const isDesktop = !isMobile;
 
   let os = "Компьютер";
   if (isIOS) os = "iOS";
@@ -321,12 +362,11 @@ function detectDevice() {
   else if (/Win/i.test(platform)) os = "Windows";
   else if (/Linux/i.test(platform)) os = "Linux";
 
-  return { isIOS, isAndroid, isMobile, isDesktop, os };
+  return { isIOS, isAndroid, isMobile, os };
 }
 
 const DEVICE = detectDevice();
 
-/* Показываем определённое устройство в статус-строке */
 (function showDevice() {
   if (DEVICE.isMobile) {
     deviceText.textContent = "Устройство: " + DEVICE.os + " — приложение откроется автоматически";
@@ -335,10 +375,14 @@ const DEVICE = detectDevice();
   }
 })();
 
-/* ---------- DEEP LINK ---------- */
+/* ---------- DEEP LINK С ИМЕНЕМ ПОДПИСКИ ---------- */
 function buildDeepLink() {
-  /* Happ принимает ссылку вида: happ://add/<URL_ПОДПИСКИ> */
-  return "happ://add/" + SUBSCRIPTION_URL;
+  /* Формат Happ:  happ://add/<URL_ПОДПИСКИ>?name=<НАЗВАНИЕ>
+     Если ваша версия Happ использует другой параметр
+     (например ?title= или #name=) — замените здесь. */
+  const url  = encodeURIComponent(SUBSCRIPTION_URL);
+  const name = encodeURIComponent(SUBSCRIPTION_NAME);
+  return "happ://add/" + url + "?name=" + name;
 }
 
 /* ---------- УТИЛИТЫ ---------- */
@@ -361,7 +405,6 @@ btn.addEventListener("click", () => {
   btn.classList.add("loading");
   btnLabel.textContent = "Открываем…";
 
-  /* Мобильные — открываем приложение через deep-link */
   if (DEVICE.isMobile) {
     try {
       window.location.href = buildDeepLink();
@@ -369,18 +412,18 @@ btn.addEventListener("click", () => {
       console.warn("Deep link error:", e);
     }
 
-    /* Если вкладка ушла в фон — приложение открылось */
+    /* если вкладка ушла в фон — приложение открылось */
     setTimeout(() => {
       if (document.hidden) {
         appOpened = true;
         btn.classList.remove("loading");
         btnLabel.textContent = "Подключено";
         setDeviceState("ok");
-        deviceText.textContent = "Happ открыт — подтвердите добавление подписки";
+        deviceText.textContent = "Happ открыт — подтвердите добавление «" + SUBSCRIPTION_NAME + "»";
       }
     }, 900);
 
-    /* Fallback: приложение не открылось */
+    /* приложение не открылось */
     setTimeout(() => {
       if (appOpened || document.hidden) return;
       btn.classList.remove("loading");
@@ -390,13 +433,13 @@ btn.addEventListener("click", () => {
       showToast("Установите Happ и попробуйте снова");
     }, 2500);
 
-  /* Десктоп — копируем ссылку */
   } else {
+    /* на компьютере — просто копируем ссылку */
     setTimeout(() => {
       btn.classList.remove("loading");
       btnLabel.textContent = "Ссылка готова";
       setDeviceState("ok");
-      deviceText.textContent = "Ссылка скопирована — вставьте её в Happ";
+      deviceText.textContent = "Ссылка «" + SUBSCRIPTION_NAME + "» скопирована — вставьте её в Happ";
       copyToClipboard(SUBSCRIPTION_URL);
     }, 500);
   }
@@ -424,7 +467,7 @@ function fallbackCopy(text) {
   try {
     document.execCommand("copy");
     showToast("Ссылка скопирована");
-  } catch {
+  } catch (e) {
     showToast("Не удалось скопировать");
   }
   document.body.removeChild(ta);
@@ -438,7 +481,7 @@ document.addEventListener("visibilitychange", () => {
     btn.classList.remove("loading");
     btnLabel.textContent = "Подключено";
     setDeviceState("ok");
-    deviceText.textContent = "Подписка добавлена в Happ";
+    deviceText.textContent = "Подписка «" + SUBSCRIPTION_NAME + "» добавлена в Happ";
   }
 });
 </script>
